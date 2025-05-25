@@ -58,6 +58,55 @@ function _mergeNamespaces(n2, m2) {
     fetch(link.href, fetchOpts);
   }
 })();
+const scriptRel = "modulepreload";
+const assetsURL = function(dep) {
+  return "/react-shopping-products/" + dep;
+};
+const seen = {};
+const __vitePreload = function preload(baseModule, deps, importerUrl) {
+  let promise = Promise.resolve();
+  if (deps && deps.length > 0) {
+    document.getElementsByTagName("link");
+    const cspNonceMeta = document.querySelector("meta[property=csp-nonce]");
+    const cspNonce = (cspNonceMeta == null ? void 0 : cspNonceMeta.nonce) || (cspNonceMeta == null ? void 0 : cspNonceMeta.getAttribute("nonce"));
+    promise = Promise.all(deps.map((dep) => {
+      dep = assetsURL(dep);
+      if (dep in seen)
+        return;
+      seen[dep] = true;
+      const isCss = dep.endsWith(".css");
+      const cssSelector = isCss ? '[rel="stylesheet"]' : "";
+      if (document.querySelector(`link[href="${dep}"]${cssSelector}`)) {
+        return;
+      }
+      const link = document.createElement("link");
+      link.rel = isCss ? "stylesheet" : scriptRel;
+      if (!isCss) {
+        link.as = "script";
+        link.crossOrigin = "";
+      }
+      link.href = dep;
+      if (cspNonce) {
+        link.setAttribute("nonce", cspNonce);
+      }
+      document.head.appendChild(link);
+      if (isCss) {
+        return new Promise((res, rej) => {
+          link.addEventListener("load", res);
+          link.addEventListener("error", () => rej(new Error(`Unable to preload CSS for ${dep}`)));
+        });
+      }
+    }));
+  }
+  return promise.then(() => baseModule()).catch((err) => {
+    const e2 = new Event("vite:preloadError", { cancelable: true });
+    e2.payload = err;
+    window.dispatchEvent(e2);
+    if (!e2.defaultPrevented) {
+      throw err;
+    }
+  });
+};
 function getDefaultExportFromCjs(x2) {
   return x2 && x2.__esModule && Object.prototype.hasOwnProperty.call(x2, "default") ? x2["default"] : x2;
 }
@@ -8928,8 +8977,15 @@ const useErrorMessage = () => {
 };
 const LoadingContext = reactExports.createContext(void 0);
 const LoadingProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = reactExports.useState(false);
-  return /* @__PURE__ */ jsx$1(LoadingContext.Provider, { value: { isLoading, setIsLoading }, children });
+  const [isLoading, setIsLoading] = reactExports.useState({
+    isFetching: false,
+    isMutating: false
+  });
+  const startFetching = () => setIsLoading((prev2) => ({ ...prev2, isFetching: true }));
+  const endFetching = () => setIsLoading((prev2) => ({ ...prev2, isFetching: false }));
+  const startMutating = () => setIsLoading((prev2) => ({ ...prev2, isMutating: true }));
+  const endMutating = () => setIsLoading((prev2) => ({ ...prev2, isMutating: false }));
+  return /* @__PURE__ */ jsx$1(LoadingContext.Provider, { value: { isLoading, startFetching, endFetching, startMutating, endMutating }, children });
 };
 const useLoading = () => {
   const context = reactExports.useContext(LoadingContext);
@@ -9299,21 +9355,21 @@ const useQueryClient = () => {
 const useQuery = ({ queryKey, fetchFn }) => {
   const query = useQueryClient();
   const [, forceRender] = reactExports.useState({});
-  const { setIsLoading } = useLoading();
+  const { startFetching, endFetching } = useLoading();
   const { setErrorMessage } = useErrorMessage();
   const state = query.get(queryKey);
   reactExports.useEffect(() => {
     const reRenderFn = () => forceRender({});
     query.subscribe(queryKey, reRenderFn);
     if (!state) {
-      setIsLoading(true);
+      startFetching();
       query.refetch(queryKey, fetchFn).catch((e2) => {
         if (e2 instanceof Error)
           setErrorMessage(e2.message);
-      }).finally(() => setIsLoading(false));
+      }).finally(() => endFetching());
     }
     return () => query.unsubscribe(queryKey, reRenderFn);
-  }, [queryKey, fetchFn, query, state, setIsLoading, setErrorMessage]);
+  }, [queryKey, fetchFn, query, state, setErrorMessage, startFetching, endFetching]);
   return {
     data: (state == null ? void 0 : state.data) || null,
     isLoading: (state == null ? void 0 : state.isLoading) || true,
@@ -9323,13 +9379,13 @@ const useQuery = ({ queryKey, fetchFn }) => {
 };
 const useCartItems = () => {
   const { setErrorMessage } = useErrorMessage();
-  const { setIsLoading } = useLoading();
+  const { startMutating, endMutating } = useLoading();
   const { data, refetch } = useQuery({
     queryKey: "/cart-items",
     fetchFn: () => getCartItems({ page: 0, size: 20 })
   });
   const addCart = async (id2) => {
-    setIsLoading(true);
+    startMutating();
     try {
       await postCartItems({ quantity: 1, productId: id2 });
       await refetch();
@@ -9337,11 +9393,11 @@ const useCartItems = () => {
       if (e2 instanceof Error)
         setErrorMessage(e2.message);
     } finally {
-      setIsLoading(false);
+      endMutating();
     }
   };
   const updateCart = async (id2, quantity) => {
-    setIsLoading(true);
+    startMutating();
     try {
       await patchCartItems({ id: id2, quantity });
       await refetch();
@@ -9349,11 +9405,11 @@ const useCartItems = () => {
       if (e2 instanceof Error)
         setErrorMessage(e2.message);
     } finally {
-      setIsLoading(false);
+      endMutating();
     }
   };
   const removeCart = async (id2) => {
-    setIsLoading(true);
+    startMutating();
     try {
       await deleteCartItems({ id: id2 });
       await refetch();
@@ -9361,7 +9417,7 @@ const useCartItems = () => {
       if (e2 instanceof Error)
         setErrorMessage(e2.message);
     } finally {
-      setIsLoading(false);
+      endMutating();
     }
   };
   const handleCartItem = (type, id2, quantity) => {
@@ -9483,12 +9539,20 @@ const selectBoxStyle = css`
 `;
 const Spinner = () => {
   const { isLoading } = useLoading();
-  if (isLoading)
+  if (isLoading.isFetching)
     return /* @__PURE__ */ jsx$1("div", { css: [spinnerWrapper, orbitSpin], className: "active", children: /* @__PURE__ */ jsxs("div", { css: orbitSpinner, children: [
       /* @__PURE__ */ jsx$1("div", { css: planet }),
       /* @__PURE__ */ jsxs("div", { css: orbit, children: [
         /* @__PURE__ */ jsx$1("div", { css: [satellite, satellite1] }),
         /* @__PURE__ */ jsx$1("div", { css: [satellite, satellite2] })
+      ] })
+    ] }) });
+  if (isLoading.isMutating)
+    return /* @__PURE__ */ jsx$1("div", { css: [orbitSpin], className: "active", children: /* @__PURE__ */ jsxs("div", { css: orbitSpinner, children: [
+      /* @__PURE__ */ jsx$1("div", { css: planet, style: { backgroundColor: "#000" } }),
+      /* @__PURE__ */ jsxs("div", { css: orbit, style: { borderColor: "#000" }, children: [
+        /* @__PURE__ */ jsx$1("div", { css: [satellite, satellite1], style: { backgroundColor: "#000" } }),
+        /* @__PURE__ */ jsx$1("div", { css: [satellite, satellite2], style: { backgroundColor: "#000" } })
       ] })
     ] }) });
 };
@@ -11101,9 +11165,8 @@ const appStyle = css`
   background-color: #fff;
 `;
 async function enableMocking() {
-  {
-    return;
-  }
+  const { worker } = await __vitePreload(() => import("./browser-Bp1Fz0Vb.js"), true ? [] : void 0);
+  return worker.start();
 }
 enableMocking().then(() => {
   client.createRoot(document.getElementById("root")).render(
