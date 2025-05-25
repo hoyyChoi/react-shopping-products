@@ -5011,7 +5011,7 @@ const content$1 = [
     price: 8130,
     imageUrl: "https://velog.velcdn.com/images/minsungje/post/c27c57cb-fcbb-4641-b72d-0e2030739ae7/image.jpg",
     category: "식료품",
-    quantity: 3
+    quantity: 0
   },
   {
     id: 7,
@@ -5019,7 +5019,7 @@ const content$1 = [
     price: 111e5,
     imageUrl: "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fb5H3cg%2FbtsMRVqcfYF%2FvbKfazkKNY7I5CGkF1Ye9k%2Fimg.png",
     category: "식료품",
-    quantity: 3
+    quantity: 5
   },
   {
     id: 8,
@@ -5027,7 +5027,7 @@ const content$1 = [
     price: 5e4,
     imageUrl: "https://media.bunjang.co.kr/product/223522208_%7Bcnt%7D_1683581287_w%7Bres%7D.jpg",
     category: "패션잡화",
-    quantity: 3
+    quantity: 6
   },
   {
     id: 9,
@@ -5099,7 +5099,7 @@ const content$1 = [
     price: 85e4,
     imageUrl: "https://i.namu.wiki/i/kQCwKHpwjePBTPXPTIizJSE0alohKKRlsGOJSrPhAdsODckkF05KNDV27xdydVqHLEdgM7yQu6NSUL-gE0t9SZH_cmaY8tMquJnfLQv5shH_pSdvsRc87hCcO5V3WBZrTwR23NYzoJJEoQIHWqAM4Q.webp",
     category: "패션잡화",
-    quantity: 3
+    quantity: 0
   },
   {
     id: 30,
@@ -5123,7 +5123,7 @@ const content$1 = [
     price: 8e5,
     imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1bvoBgTtG0L-FBnZBsCOl5O-WcelpPH24IQ&s",
     category: "패션 잡화",
-    quantity: 3
+    quantity: 0
   }
 ];
 const pageable$1 = {

@@ -9513,7 +9513,7 @@ const useProducts = () => {
 const ProductPage = () => {
   const { products, filter, setFilter, sort, setSort } = useProducts();
   return /* @__PURE__ */ jsx$1(Fragment, { children: /* @__PURE__ */ jsxs("div", { css: containerStyle, children: [
-    /* @__PURE__ */ jsx$1(Text, { variant: "title-1", children: "bpple 상품 목록" }),
+    /* @__PURE__ */ jsx$1(Text, { variant: "title-1", children: "호이초이의 상품 목록" }),
     /* @__PURE__ */ jsxs("div", { css: selectBoxStyle, children: [
       /* @__PURE__ */ jsx$1(Select, { options: OPTION.FILTER, selectedItem: filter, setSelectedItem: setFilter }),
       /* @__PURE__ */ jsx$1(Select, { options: OPTION.SORT, selectedItem: sort, setSelectedItem: setSort })
@@ -11165,7 +11165,7 @@ const appStyle = css`
   background-color: #fff;
 `;
 async function enableMocking() {
-  const { worker } = await __vitePreload(() => import("./browser-jpD91YKT.js"), true ? [] : void 0);
+  const { worker } = await __vitePreload(() => import("./browser-BdJW2h4x.js"), true ? [] : void 0);
   return worker.start({
     serviceWorker: {
       url: `${"/react-shopping-products/"}mockServiceWorker.js`
