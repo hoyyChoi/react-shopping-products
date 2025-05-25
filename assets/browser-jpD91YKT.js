@@ -5164,7 +5164,7 @@ const MOCKING_PRODUCT_DATA = {
   numberOfElements: numberOfElements$1,
   empty: empty$1
 };
-const BASE_URL$1 = "http://techcourse-lv2-alb-974870821.ap-northeast-2.elb.amazonaws.com";
+const BASE_URL$1 = "https://techcourse-lv2-alb-974870821.ap-northeast-2.elb.amazonaws.com";
 const getProducts = http.get(`${BASE_URL$1}/products`, ({ request }) => {
   const url = new URL(request.url);
   const params = Object.fromEntries(url.searchParams.entries());
@@ -5216,7 +5216,7 @@ const MOCKING_CART_ITEMS_DATA = {
   numberOfElements,
   empty
 };
-const BASE_URL = "http://techcourse-lv2-alb-974870821.ap-northeast-2.elb.amazonaws.com";
+const BASE_URL = "https://techcourse-lv2-alb-974870821.ap-northeast-2.elb.amazonaws.com";
 const products = { ...MOCKING_PRODUCT_DATA };
 const cartItems = { ...MOCKING_CART_ITEMS_DATA };
 const getCartItems = http.get(`${BASE_URL}/cart-items`, () => {

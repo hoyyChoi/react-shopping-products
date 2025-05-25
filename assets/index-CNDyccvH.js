@@ -9272,7 +9272,7 @@ const signButtonStyle = css`
   background-color: #fff;
   cursor: pointer;
 `;
-const BASE_URL = "http://techcourse-lv2-alb-974870821.ap-northeast-2.elb.amazonaws.com";
+const BASE_URL = "https://techcourse-lv2-alb-974870821.ap-northeast-2.elb.amazonaws.com";
 const TOKEN = "aG95eUNob2k6cGFzc3dvcmQ=";
 const baseFetch = async (url, options, parseJson = true) => {
   const response = await fetch(`${BASE_URL}${url}`, {
@@ -11165,7 +11165,7 @@ const appStyle = css`
   background-color: #fff;
 `;
 async function enableMocking() {
-  const { worker } = await __vitePreload(() => import("./browser-Bp1Fz0Vb.js"), true ? [] : void 0);
+  const { worker } = await __vitePreload(() => import("./browser-jpD91YKT.js"), true ? [] : void 0);
   return worker.start({
     serviceWorker: {
       url: `${"/react-shopping-products/"}mockServiceWorker.js`
