@@ -11166,7 +11166,11 @@ const appStyle = css`
 `;
 async function enableMocking() {
   const { worker } = await __vitePreload(() => import("./browser-Bp1Fz0Vb.js"), true ? [] : void 0);
-  return worker.start();
+  return worker.start({
+    serviceWorker: {
+      url: `${"/react-shopping-products/"}mockServiceWorker.js`
+    }
+  });
 }
 enableMocking().then(() => {
   client.createRoot(document.getElementById("root")).render(
